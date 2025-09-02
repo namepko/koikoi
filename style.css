@@ -1,0 +1,1351 @@
+body {
+  background-color: #ecf0f1;
+  margin: 0;
+  padding: 8px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+.container {
+  position: relative;
+  width: 600px;
+  height: 600px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 20px 45px 20px;
+  box-sizing: border-box;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06);
+  border: 2px solid #bdc3c7;
+}
+
+.decision-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(44, 62, 80, 0.7);
+  border-radius: 12px;
+  z-index: 100;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+
+.decision-overlay.active {
+  opacity: 1;
+}
+
+header {
+  font-weight: 700;
+  font-size: 1.2em;
+  text-align: center;
+  user-select: none;
+  color: #2c3e50;
+  margin-bottom: 8px;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  background-color: #f8f9fa;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+}
+
+:root {
+  --animation-duration: 2.0s;
+}
+
+.message-section {
+  min-height: 28px;
+  max-height: 32px;
+  overflow: hidden;
+  border-radius: 8px;
+  background-color: #ffffff;
+  margin: 4px 0 6px 0;
+  padding: 4px 12px;
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.8rem;
+  line-height: 1.2em;
+  white-space: nowrap;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 10;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-family: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', 'Android Emoji', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+}
+
+.message-section.player-turn {
+  animation: message-outer-glow-sync var(--animation-duration) ease-in-out infinite;
+}
+
+@keyframes message-outer-glow-sync {
+  0% { 
+    box-shadow: 0 0 0 2px #e3f2fd;
+  }
+  50% { 
+    box-shadow: 0 0 0 4px #2196f3;
+  }
+  100% { 
+    box-shadow: 0 0 0 2px #e3f2fd;
+  }
+}
+
+/* 役完成メッセージ（上部表示用） */
+.role-completion-message {
+  position: absolute;
+  top: 45px;
+  left: 20px;
+  right: 20px;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #e74c3c;
+  background: linear-gradient(135deg, #fff5f5, #ffeaa7);
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 2px solid #e74c3c;
+  box-shadow: 0 2px 8px rgba(231, 76, 60, 0.3);
+  z-index: 180;
+  animation: gentle-pulse 2s ease-in-out infinite;
+  display: none;
+}
+
+@keyframes gentle-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}
+
+.opponent-section {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 8px;
+  user-select: none;
+  min-height: 44px;
+  max-height: 48px;
+  position: relative;
+  overflow: visible;
+  margin-bottom: 4px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+  border: 1px solid #dee2e6;
+}
+
+.opponent-hand {
+  display: flex;
+  justify-content: flex-start;
+  gap: 3px;
+  max-width: 48%;
+  flex-wrap: wrap;
+  overflow: visible;
+  align-items: flex-start;
+  padding: 2px;
+}
+
+.opponent-paired {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: nowrap;
+  overflow: visible;
+  max-height: 36px;
+  align-content: flex-start;
+  align-items: flex-start;
+  max-width: 48%;
+  flex-direction: row;
+  gap: 0;
+  padding: 2px;
+}
+
+.opponent-card {
+  width: 14px;
+  height: 22px;
+  background-color: #607d8b;
+  border-radius: 4px;
+  cursor: default;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  border: 1px solid #546e7a;
+}
+
+.opponent-paired-card {
+  position: relative;
+  width: 26px;
+  height: 36px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  font-size: 0.55rem;
+  cursor: default;
+  box-sizing: border-box;
+  padding: 2px;
+  flex-shrink: 0;
+  font-family: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', 'Android Emoji', sans-serif !important;
+  line-height: 0.8;
+  letter-spacing: 0.1px;
+  margin-left: -8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.opponent-paired-card:hover {
+  transform: translateY(-1px);
+}
+
+.opponent-paired-card:first-child {
+  margin-left: 0;
+  z-index: 30;
+}
+
+.opponent-paired-card:nth-child(2) { z-index: 29; }
+.opponent-paired-card:nth-child(3) { z-index: 28; }
+.opponent-paired-card:nth-child(4) { z-index: 27; }
+.opponent-paired-card:nth-child(5) { z-index: 26; }
+.opponent-paired-card:nth-child(6) { z-index: 25; }
+.opponent-paired-card:nth-child(7) { z-index: 24; }
+.opponent-paired-card:nth-child(8) { z-index: 23; }
+.opponent-paired-card:nth-child(9) { z-index: 22; }
+.opponent-paired-card:nth-child(10) { z-index: 21; }
+
+.opponent-paired-card.card-light { background-color: #c8e6c9; color: #1b5e20; }
+.opponent-paired-card.card-ribbon { background-color: #ffcdd2; color: #c62828; }
+.opponent-paired-card.card-seed { background-color: #fff3e0; color: #ef6c00; }
+.opponent-paired-card.card-chaff { background-color: #f5f5f5; color: #424242; }
+
+.main-area {
+  flex: 1;
+  display: flex;
+  margin: 2px 0;
+  min-height: 160px;
+  max-height: 170px;
+  overflow: hidden;
+  background-color: #fafbfc;
+  border-radius: 8px;
+  padding: 6px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+  border: 1px solid #dee2e6;
+}
+
+.deck {
+  position: relative;
+  margin-right: 8px;
+  user-select: none;
+  cursor: pointer;
+  width: 28px;
+  height: 42px;
+  border-radius: 6px;
+  flex-shrink: 0;
+  background-color: #cfd8dc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: #455a64;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  border: 1px solid #b0bec5;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.deck:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.field-cards {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+  grid-auto-rows: 72px;
+  gap: 4px 6px;
+  padding: 4px;
+  overflow: hidden;
+  align-items: start;
+}
+
+.field-card {
+  width: 100%;
+  height: 100%;
+  min-width: 48px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  font-size: 1.3rem;
+  user-select: none;
+  cursor: pointer;
+  position: relative;
+  padding: 2px;
+  box-sizing: border-box;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  font-family: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', 'Android Emoji', sans-serif !important;
+  text-rendering: optimizeSpeed;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.0;
+  letter-spacing: 1px;
+  z-index: 1;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.field-card.card-light { background-color: #c8e6c9; color: #1b5e20; }
+.field-card.card-ribbon { background-color: #ffcdd2; color: #c62828; }
+.field-card.card-seed { background-color: #fff3e0; color: #ef6c00; }
+.field-card.card-chaff { background-color: #f5f5f5; color: #424242; }
+
+.field-card.entering {
+  transform: scale(1.05);
+  opacity: 0;
+}
+
+.field-card.entered {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.field-card.hover-highlight {
+  transform: translateY(-3px) scale(1.02) !important;
+  z-index: 25 !important;
+  animation: card-outer-glow-blue-sync var(--animation-duration) ease-in-out infinite !important;
+}
+
+.field-card.card-taken-down {
+  animation: field-card-slide-down 0.8s ease-out forwards !important;
+  z-index: 60 !important;
+  pointer-events: none !important;
+}
+
+@keyframes field-card-slide-down {
+  0% { transform: translateY(0px) scale(1) !important; opacity: 1 !important; }
+  100% { transform: translateY(60px) scale(0.8) !important; opacity: 0 !important; }
+}
+
+.fallback-display {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif !important;
+  font-size: 0.7rem !important;
+  text-align: center;
+  line-height: 1.1;
+  padding: 2px;
+}
+
+.hand-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 32px 8px 12px 8px; /* 下部パディングを8px → 12pxに変更 */
+  min-height: 180px;
+  max-height: 190px;
+  box-sizing: border-box;
+  user-select: none;
+  overflow: hidden;
+  position: relative;
+  margin-top: 4px;
+  z-index: 5;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border: 1px solid #dee2e6;
+}
+.hand-container::before {
+  content: "🔼手札";
+  position: absolute;
+  top: 6px;
+  left: 12px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #ffffff;
+  user-select: none;
+  z-index: 10;
+  background-color: #3498db;
+  padding: 3px 8px;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(52, 152, 219, 0.3);
+  border: 1px solid #2980b9;
+}
+
+.hand-container::after {
+  content: "🔽取札";
+  position: absolute;
+  top: 6px;
+  right: 12px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #ffffff;
+  user-select: none;
+  z-index: 10;
+  background-color: #e74c3c;
+  padding: 3px 8px;
+  border-radius: 6px;
+  box-shadow: 0 2px 4px rgba(231, 76, 60, 0.3);
+  border: 1px solid #c0392b;
+}
+
+.player-hand {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 48%;
+  box-sizing: border-box;
+  max-height: 150px;
+  overflow: hidden;
+  align-content: flex-start;
+  align-items: flex-start;
+  font-family: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', 'Android Emoji', sans-serif !important;
+  text-rendering: optimizeSpeed;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  justify-content: flex-start;
+  gap: 4px;
+  padding: 4px;
+}
+
+.player-paired {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 48%;
+  box-sizing: border-box;
+  max-height: 150px;
+  overflow: hidden;
+  align-content: flex-start;
+  align-items: flex-start;
+  font-family: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', 'Android Emoji', sans-serif !important;
+  text-rendering: optimizeSpeed;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  justify-content: flex-end;
+  flex-direction: row;
+  gap: 2px;
+  z-index: 1;
+  position: relative;
+  padding: 4px;
+}
+
+.hand-card {
+  position: relative;
+  width: 36px;
+  height: 56px;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  font-size: 1.0rem;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  padding: 2px;
+  flex-shrink: 0;
+  font-family: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', 'Android Emoji', sans-serif !important;
+  text-rendering: optimizeSpeed;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.0;
+  letter-spacing: 1px;
+  z-index: 2;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.hand-card.card-light { background-color: #c8e6c9 !important; color: #1b5e20; }
+.hand-card.card-ribbon { background-color: #ffcdd2 !important; color: #c62828; }
+.hand-card.card-seed { background-color: #fff3e0 !important; color: #ef6c00; }
+.hand-card.card-chaff { background-color: #f5f5f5 !important; color: #424242; }
+
+.hand-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  z-index: 20;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.16);
+}
+
+.hand-card.play-to-field {
+  animation: hand-card-play-up 0.8s ease-out forwards !important;
+  z-index: 70 !important;
+  pointer-events: none !important;
+}
+
+@keyframes hand-card-play-up {
+  0% { transform: translateY(0px) scale(1) !important; opacity: 1 !important; }
+  100% { transform: translateY(-80px) scale(0.8) !important; opacity: 0 !important; }
+}
+
+.hand-card.discard-to-field {
+  animation: hand-card-discard-up 0.7s ease-out forwards !important;
+  z-index: 65 !important;
+  pointer-events: none !important;
+}
+
+@keyframes hand-card-discard-up {
+  0% { transform: translateY(0px) scale(1) !important; opacity: 1 !important; }
+  100% { transform: translateY(-60px) scale(0.9) !important; opacity: 0 !important; }
+}
+
+.opponent-card.card-played-opponent {
+  animation: opponent-card-slide-down 0.6s ease-out forwards !important;
+  z-index: 15 !important;
+  pointer-events: none !important;
+}
+
+@keyframes opponent-card-slide-down {
+  0% { transform: translateY(0px) !important; opacity: 1 !important; }
+  100% { transform: translateY(30px) !important; opacity: 0 !important; }
+}
+
+.icon-glow::after,
+.icon-ribbon::after,
+.icon-seed::after,
+.icon-chaff::after {
+  position: absolute;
+  top: 2px;
+  right: 3px;
+  font-size: 0.5rem;
+  user-select: none;
+  pointer-events: none;
+  text-shadow: 0 0 2px rgba(0,0,0,0.5);
+  z-index: 100;
+}
+
+.icon-glow::after {content: "✨"; color: #f39c12;}
+.icon-ribbon::after {content: "🔴"; color: #e74c3c;}
+.icon-seed::after {content: "🌱"; color: #27ae60;}
+.icon-chaff::after {content: "🍂"; color: #d35400;}
+
+.opponent-paired-card.icon-glow::after,
+.opponent-paired-card.icon-ribbon::after,
+.opponent-paired-card.icon-seed::after,
+.opponent-paired-card.icon-chaff::after {
+  position: absolute;
+  top: 1px;
+  right: 2px;
+  font-size: 0.4rem;
+  user-select: none;
+  pointer-events: none;
+  text-shadow: 0 0 1px rgba(0,0,0,0.5);
+  z-index: 100;
+}
+
+@keyframes card-outer-glow-blue-sync {
+  0% { 
+    box-shadow: 0 0 0 2px #e3f2fd;
+  }
+  50% { 
+    box-shadow: 0 0 0 4px #2196f3;
+  }
+  100% { 
+    box-shadow: 0 0 0 2px #e3f2fd;
+  }
+}
+
+@keyframes card-outer-glow-orange-sync {
+  0% { 
+    box-shadow: 0 0 0 2px #fff3e0;
+  }
+  50% { 
+    box-shadow: 0 0 0 4px #ff9800;
+  }
+  100% { 
+    box-shadow: 0 0 0 2px #fff3e0;
+  }
+}
+
+@keyframes card-outer-glow-red-sync {
+  0% { 
+    box-shadow: 0 0 0 2px #ffebee;
+  }
+  50% { 
+    box-shadow: 0 0 0 4px #f44336;
+  }
+  100% { 
+    box-shadow: 0 0 0 2px #ffebee;
+  }
+}
+
+.hand-card.has-match {
+  animation: card-outer-glow-blue-sync var(--animation-duration) ease-in-out infinite !important;
+  z-index: 15 !important;
+}
+
+.hand-card.can-take,
+.field-card.can-take {
+  animation: card-outer-glow-blue-sync var(--animation-duration) ease-in-out infinite !important;
+  z-index: 15 !important;
+}
+
+.field-card.can-take:hover {
+  transform: translateY(-4px) scale(1.05) !important;
+  z-index: 35 !important;
+}
+
+.hand-card.can-discard {
+  animation: card-outer-glow-orange-sync var(--animation-duration) infinite !important;
+  z-index: 15 !important;
+}
+
+.field-card.selectable {
+  cursor: pointer !important;
+  animation: card-outer-glow-red-sync var(--animation-duration) infinite !important;
+  z-index: 40 !important;
+}
+
+/* ボタンコンテナ - 高さ統一 */
+.bottom-controls {
+  position: absolute;
+  bottom: 16px; /* 8px → 16px に変更（8px上に移動） */
+  left: 20px;
+  right: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  z-index: 150;
+  height: 36px;
+}
+
+/* 全ボタン統一スタイル - 36px高さに統一 */
+.control-button, .score-button {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 4px 8px;
+  font-size: 0.6em;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: default;
+  transition: all 0.2s ease;
+  user-select: none;
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+  box-sizing: border-box;
+  text-align: center;
+  line-height: 1.2;
+  white-space: nowrap;
+  gap: 4px;
+}
+
+/* こいこい・勝負ボタンのスタイル */
+.control-button {
+  border: 1px solid #3498db;
+  background-color: #3498db;
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(52, 152, 219, 0.2);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.control-button:hover {
+  background-color: #2980b9;
+  border-color: #2980b9;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 6px rgba(52, 152, 219, 0.3);
+}
+
+/* ポイント表示のスタイル（ボタンらしくない見た目） */
+.score-button {
+  border: 1px solid #bdc3c7;
+  background-color: #ecf0f1;
+  color: #2c3e50;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.score-button.high-score {
+  background-color: #fff3e0;
+  color: #e65100;
+  border-color: #ff9800;
+}
+
+/* 無効化状態 */
+.control-button:disabled {
+  background-color: #ecf0f1 !important;
+  border-color: #bdc3c7 !important;
+  color: #2c3e50 !important;
+  cursor: not-allowed !important;
+  opacity: 1 !important;
+  transform: none !important;
+  animation: none !important;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05) !important;
+}
+
+/* 点滅状態（高さ維持） */
+.control-button.koikoi-blink {
+  background-color: #1abc9c !important;
+  border-color: #16a085 !important;
+  animation: button-outer-glow-green-sync var(--animation-duration) infinite !important;
+  transform: scale(1.01) !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+}
+
+@keyframes button-outer-glow-green-sync {
+  0% { box-shadow: 0 0 0 2px #d1f2eb; }
+  50% { box-shadow: 0 0 0 3px #1abc9c; }
+  100% { box-shadow: 0 0 0 2px #d1f2eb; }
+}
+
+.control-button.win-blink {
+  background-color: #e74c3c !important;
+  border-color: #c0392b !important;
+  animation: button-outer-glow-red-sync var(--animation-duration) infinite !important;
+  transform: scale(1.01) !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+}
+
+@keyframes button-outer-glow-red-sync {
+  0% { box-shadow: 0 0 0 2px #fadbd8; }
+  50% { box-shadow: 0 0 0 3px #e74c3c; }
+  100% { box-shadow: 0 0 0 2px #fadbd8; }
+}
+
+/* 札を捨てるボタン */
+.control-button.discard {
+  background-color: #f39c12;
+  border-color: #d68910;
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: none;
+  width: auto;
+  min-width: 120px;
+  z-index: 200;
+}
+
+.control-button.discard:hover {
+  background-color: #e67e22;
+  border-color: #d68910;
+  transform: translateX(-50%) translateY(-1px);
+}
+
+.control-button.next-game {
+  background-color: #9b59b6;
+  border-color: #8e44ad;
+}
+
+.control-button.next-game:hover {
+  background-color: #8e44ad;
+  border-color: #7d3c98;
+}
+
+.control-button.end-game {
+  background-color: #95a5a6;
+  border-color: #7f8c8d;
+}
+
+.control-button.end-game:hover {
+  background-color: #7f8c8d;
+  border-color: #6c7b7f;
+}
+
+/* スコア増加時の拡大アニメーション */
+@keyframes score-increase-scale {
+  0% { 
+    transform: scale(1); 
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+  50% { 
+    transform: scale(1.2); 
+    box-shadow: 0 0 8px 2px #27ae60;
+    background-color: #d5f4e6;
+  }
+  100% { 
+    transform: scale(1); 
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+}
+
+.score-increased {
+  animation: score-increase-scale 0.6s ease forwards;
+  color: #27ae60 !important;
+  border-color: #27ae60 !important;
+}
+
+/* 役完成通知の射幸心を煽るデザイン */
+#role-completion-notification {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, #ff6b6b 0%, #ffd700 50%, #ff8c00 100%);
+  border: 4px solid #ffd700;
+  padding: 25px 35px;
+  border-radius: 20px;
+  box-shadow: 
+    0 0 30px 8px rgba(255, 215, 0, 0.8),
+    0 0 60px 15px rgba(255, 140, 0, 0.6),
+    inset 0 2px 10px rgba(255, 255, 255, 0.3);
+  color: #2c3e50;
+  text-align: center;
+  font-weight: 700;
+  user-select: none;
+  z-index: 200;
+  animation: pulse-celebration 2s ease-in-out infinite;
+  backdrop-filter: brightness(1.2) saturate(1.5);
+  display: none;
+}
+
+.role-owner-celebration {
+  font-size: 1.3rem;
+  margin-bottom: 12px;
+  font-weight: 900;
+  color: #1a5490;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+  animation: text-glow 1.5s ease-in-out infinite alternate;
+}
+
+.role-name-celebration {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: #d32f2f;
+  margin-bottom: 8px;
+  text-shadow: 2px 2px 6px rgba(211, 47, 47, 0.5);
+  letter-spacing: 2px;
+  animation: role-name-shine 2.5s ease-in-out infinite;
+}
+
+.role-points-celebration {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #1565c0;
+  margin-bottom: 16px;
+  background: linear-gradient(45deg, #1976d2, #42a5f5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 10px rgba(25, 118, 210, 0.5);
+}
+
+.role-cards-celebration {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.celebration-card {
+  width: 40px;
+  height: 60px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  font-size: 1.5rem;
+  box-shadow: 
+    0 0 15px 3px #ffd700,
+    0 4px 8px rgba(0, 0, 0, 0.3);
+  border: 2px solid #ffb347;
+  font-family: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', 'Android Emoji', sans-serif !important;
+  background: linear-gradient(145deg, #fff8dc, #ffe4b5);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.celebration-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  transform: rotate(45deg);
+  animation: card-shine 3s linear infinite;
+}
+
+.celebration-card:hover {
+  transform: translateY(-6px) scale(1.15) rotateY(10deg);
+  box-shadow: 
+    0 0 25px 5px #ffea00,
+    0 8px 16px rgba(0, 0, 0, 0.4);
+}
+
+.celebration-card.card-light { 
+  background: linear-gradient(145deg, #c8e6c9, #a5d6a7); 
+  color: #1b5e20; 
+}
+.celebration-card.card-ribbon { 
+  background: linear-gradient(145deg, #ffcdd2, #f8bbd9); 
+  color: #c62828; 
+}
+.celebration-card.card-seed { 
+  background: linear-gradient(145deg, #fff3e0, #ffe0b2); 
+  color: #ef6c00; 
+}
+.celebration-card.card-chaff { 
+  background: linear-gradient(145deg, #f5f5f5, #e0e0e0); 
+  color: #424242; 
+}
+
+@keyframes pulse-celebration {
+  0% { 
+    box-shadow: 0 0 20px 8px rgba(255, 215, 0, 0.6);
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% { 
+    box-shadow: 0 0 40px 15px rgba(255, 234, 0, 0.9);
+    transform: translate(-50%, -50%) scale(1.02);
+  }
+  100% { 
+    box-shadow: 0 0 20px 8px rgba(255, 215, 0, 0.6);
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes text-glow {
+  0% { text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); }
+  100% { text-shadow: 2px 2px 8px rgba(26, 84, 144, 0.8), 0 0 15px rgba(26, 84, 144, 0.5); }
+}
+
+@keyframes role-name-shine {
+  0%, 100% { 
+    text-shadow: 2px 2px 6px rgba(211, 47, 47, 0.5); 
+    transform: scale(1);
+  }
+  50% { 
+    text-shadow: 2px 2px 12px rgba(211, 47, 47, 0.8), 0 0 20px rgba(211, 47, 47, 0.6); 
+    transform: scale(1.05);
+  }
+}
+
+@keyframes card-shine {
+  0% { transform: translateX(-200%) rotate(45deg); }
+  100% { transform: translateX(200%) rotate(45deg); }
+}
+
+.celebration-particle {
+  position: absolute;
+  font-size: 1.5rem;
+  pointer-events: none;
+  animation: particle-float 2s ease-out forwards;
+  z-index: 300;
+}
+
+@keyframes particle-float {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+#roles-btn {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-size: 0.6em;
+  padding: 3px 6px;
+  border-radius: 4px;
+  background-color: #7f8c8d;
+  border: 1px solid #6c7b7f;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  min-height: 20px;
+  min-width: 50px;
+  z-index: 1000;
+  box-shadow: 0 1px 2px rgba(127, 140, 141, 0.3);
+}
+
+#roles-btn:hover { 
+  background-color: #95a5a6;
+  transform: translateY(-1px);
+}
+
+#reset-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 0.6em;
+  padding: 3px 6px;
+  border-radius: 4px;
+  background-color: #7f8c8d;
+  border: 1px solid #6c7b7f;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  min-height: 20px;
+  min-width: 50px;
+  z-index: 1000;
+  box-shadow: 0 1px 2px rgba(127, 140, 141, 0.3);
+}
+
+#reset-btn:hover { 
+  background-color: #95a5a6;
+  transform: translateY(-1px);
+}
+
+#roles-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 15000;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+#roles-modal {
+  background-color: #ffffff;
+  border-radius: 8px;
+  width: 600px;
+  height: 600px;
+  position: relative;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  border: 2px solid #bdc3c7;
+}
+
+#roles-modal-close-btn {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background-color: #7f8c8d;
+  border: 1px solid #6c7b7f;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.7em;
+  font-weight: 700;
+  z-index: 1;
+}
+
+#roles-modal-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 8px;
+}
+
+#game-result-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 16000;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+#game-result-modal {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 20px;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  border: 2px solid #bdc3c7;
+}
+
+#game-result-modal h3 {
+  margin: 0 0 16px 0;
+  font-size: 1.5rem;
+  color: #2c3e50;
+  font-weight: 800;
+}
+
+#game-result-stats {
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+  color: #34495e;
+  line-height: 1.4;
+}
+
+#game-result-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+}
+
+#next-game-btn, #end-game-btn {
+  padding: 10px 20px;
+  font-size: 0.9em;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  min-width: 120px;
+  border: none;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+#next-game-btn {
+  background-color: #9b59b6;
+}
+
+#next-game-btn:hover {
+  background-color: #8e44ad;
+  transform: translateY(-1px);
+}
+
+#end-game-btn {
+  background-color: #95a5a6;
+}
+
+#end-game-btn:hover {
+  background-color: #7f8c8d;
+  transform: translateY(-1px);
+}
+
+#goodbye-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 17000;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+#goodbye-modal {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 30px;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+  border: 2px solid #bdc3c7;
+}
+
+#goodbye-modal h3 {
+  margin: 0 0 16px 0;
+  font-size: 1.5rem;
+  color: #2c3e50;
+  font-weight: 800;
+}
+
+#goodbye-stats {
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+  color: #34495e;
+  line-height: 1.4;
+}
+
+#goodbye-message {
+  font-size: 2rem;
+  margin: 20px 0;
+  color: #e74c3c;
+}
+
+#role-modal-backdrop {
+  position: fixed;
+  top: 0;left:0;right:0;bottom:0;
+  background: rgba(0,0,0,0.7);
+  display: none;
+  justify-content:center;
+  align-items:center;
+  z-index: 15000;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+#role-modal {
+  background-color: #ffffff;
+  border-radius: 8px;
+  padding: 16px 20px;
+  max-width: 480px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+  user-select:none;
+  font-weight: 700;
+  font-family: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', 'Android Emoji', sans-serif !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  border: 2px solid #bdc3c7;
+}
+
+#role-modal h3 {
+  margin: 0 0 12px 0;
+  font-size: 1.4rem;
+  color: #2c3e50;
+}
+
+#role-modal-owner {
+  font-weight: 800;
+  font-size: 1.0rem;
+  margin-bottom: 10px;
+  color: #34495e;
+  background-color: #ecf0f1;
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-align: center;
+  border: 1px solid #bdc3c7;
+}
+
+.role-entry {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+  background-color: #f8f9fa;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #dee2e6;
+}
+
+.role-entry .role-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #3498db;
+  white-space: nowrap;
+  min-width: 60px;
+}
+
+.role-cards-container {
+  display: flex;
+  gap: 2px;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  flex: 1;
+}
+
+.role-card {
+  width: 28px;
+  height: 42px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-weight: 700;
+  font-size: 0.8rem;
+  margin: 1px;
+  box-sizing: border-box;
+  cursor: default;
+  flex-shrink: 0;
+  font-family: 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', 'Android Emoji', sans-serif !important;
+  line-height: 1.0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.role-card.card-light { background-color: #c8e6c9; color: #1b5e20; }
+.role-card.card-ribbon { background-color: #ffcdd2; color: #c62828; }
+.role-card.card-seed { background-color: #fff3e0; color: #ef6c00; }
+.role-card.card-chaff { background-color: #f5f5f5; color: #424242; }
+
+#role-modal-points {
+  font-size: 1.1rem;
+  margin-bottom: 16px;
+  color: #27ae60;
+  background-color: #d5f4e6;
+  padding: 6px 12px;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 700;
+  border: 1px solid #27ae60;
+}
+
+#role-modal-close-btn {
+  background-color: #3498db;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  color: white;
+  font-weight: 700;
+  border: 1px solid #2980b9;
+  cursor: pointer;
+  width: 100%;
+  box-shadow: 0 2px 4px rgba(52, 152, 219, 0.2);
+}
+
+#role-modal-close-btn:hover {
+  background-color: #2980b9;
+}
+
+/* レスポンシブ対応 */
+@media (max-width: 600px) {
+  .bottom-controls {
+    left: 10px;
+    right: 10px;
+    gap: 4px;
+  }
+  
+  .control-button, .score-button {
+    font-size: 0.55em;
+    padding: 3px 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .control-button, .score-button {
+    font-size: 0.5em;
+    padding: 2px 4px;
+    gap: 2px;
+  }
+}
+
+@media (hover: none) {
+  .hand-card:hover,
+  .field-card:hover,
+  .control-button:hover,
+  .deck:hover,
+  .opponent-paired-card:hover {
+    transform: none;
+    box-shadow: inherit;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .message-section.player-turn,
+  .hand-card.can-take,
+  .field-card.can-take,
+  .hand-card.can-discard,
+  .field-card.hover-highlight,
+  .hand-card.has-match,
+  .field-card.selectable,
+  .hand-card.play-to-field,
+  .hand-card.discard-to-field,
+  .field-card.card-taken-down,
+  .opponent-card.card-played-opponent,
+  .control-button.koikoi-blink,
+  .control-button.win-blink {
+    animation: none !important;
+  }
+}
